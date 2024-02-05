@@ -5,7 +5,7 @@ namespace Hexlet\Tests\Validator;
 use PHPUnit\Framework\TestCase;
 use Hexlet\Validator\Validator;
 
-class ValidatorTest extends TestCase
+class StringValidatorTest extends TestCase
 {
     public function testTwoValidator(): void
     {
