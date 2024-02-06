@@ -11,6 +11,7 @@ class ArrayValidator
         $this->options = array_merge([
             'required' => false,
             'sizeof' => null,
+            'shape' => null,
         ], $options);
     }
 
@@ -28,6 +29,13 @@ class ArrayValidator
                 return false;
             }
         }
+        if (!is_null($this->options['shape'])) {
+            foreach ($array as $key => $item) {
+                if (!$this->options['shape'][$key]->isValid($item)) {
+                    return false;
+                }
+            }
+        }
         return true;
     }
 
@@ -41,6 +49,13 @@ class ArrayValidator
     public function sizeof(int $number): ArrayValidator
     {
         $this->options['sizeof'] = $number;
+
+        return new self($this->options);
+    }
+
+    public function shape(array $validators): ArrayValidator
+    {
+        $this->options['shape'] = $validators;
 
         return new self($this->options);
     }
