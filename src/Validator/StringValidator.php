@@ -5,9 +5,11 @@ namespace Hexlet\Validator;
 class StringValidator
 {
     protected array $options;
+    protected array $validators;
 
-    public function __construct(array $options = [])
+    public function __construct(array $options = [], array $validators = [])
     {
+        $this->validators = $validators;
         $this->options = array_merge([
             'required' => false,
             'minLength' => null,
@@ -34,6 +36,13 @@ class StringValidator
                 return false;
             }
         }
+        if (count($this->validators)) {
+            foreach ($this->validators as $key => $validator) {
+                if (isset($this->options[$key]) && !$validator($string, $this->options[$key])) {
+                    return false;
+                }
+            }
+        }
         return true;
     }
 
@@ -41,20 +50,27 @@ class StringValidator
     {
         $this->options['required'] = true;
 
-        return new self($this->options);
+        return new self($this->options, $this->validators);
     }
 
     public function minLength(int $number): StringValidator
     {
         $this->options['minLength'] = $number;
 
-        return new self($this->options);
+        return new self($this->options, $this->validators);
     }
 
     public function contains(string $string): StringValidator
     {
         $this->options['contains'] = $string;
 
-        return new self($this->options);
+        return new self($this->options, $this->validators);
+    }
+
+    public function test(string $name, string $value): StringValidator
+    {
+        $this->options[$name] = $value;
+
+        return new self($this->options, $this->validators);
     }
 }

@@ -48,4 +48,18 @@ class StringValidatorTest extends TestCase
         $this->assertTrue($schema->contains('what')->isValid('what does the fox say'));
         $this->assertFalse($schema->contains('whatthe')->isValid('what does the fox say'));
     }
+
+    public function testAddValidator(): void
+    {
+        $v = new Validator();
+
+        $fn = fn($value, $start) => str_starts_with($value, $start);
+        $v->addValidator('string', 'startWith', $fn);
+
+
+        $schema = $v->string()->test('startWith', 'H');
+
+        $this->assertFalse($schema->isValid('exlet'));
+        $this->assertTrue($schema->isValid('Hexlet'));
+    }
 }

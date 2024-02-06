@@ -5,9 +5,11 @@ namespace Hexlet\Validator;
 class NumberValidator
 {
     protected array $options;
+    protected array $validators;
 
-    public function __construct(array $options = [])
+    public function __construct(array $options = [], array $validators = [])
     {
+        $this->validators = $validators;
         $this->options = array_merge([
             'required' => false,
             'positive' => false,
@@ -38,6 +40,13 @@ class NumberValidator
                 return false;
             }
         }
+        if (count($this->validators)) {
+            foreach ($this->validators as $key => $validator) {
+                if (isset($this->options[$key]) && !$validator($number, $this->options[$key])) {
+                    return false;
+                }
+            }
+        }
         return true;
     }
 
@@ -45,20 +54,27 @@ class NumberValidator
     {
         $this->options['required'] = true;
 
-        return new self($this->options);
+        return new self($this->options, $this->validators);
     }
 
     public function positive(): NumberValidator
     {
         $this->options['positive'] = true;
 
-        return new self($this->options);
+        return new self($this->options, $this->validators);
     }
 
     public function range(int $min, int $max): NumberValidator
     {
         $this->options['range'] = [$min, $max];
 
-        return new self($this->options);
+        return new self($this->options, $this->validators);
+    }
+
+    public function test(string $name, int $value): NumberValidator
+    {
+        $this->options[$name] = $value;
+
+        return new self($this->options, $this->validators);
     }
 }
