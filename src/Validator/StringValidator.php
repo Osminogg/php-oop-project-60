@@ -36,7 +36,7 @@ class StringValidator
                 return false;
             }
         }
-        if (count($this->validators)) {
+        if (count($this->validators) > 0) {
             foreach ($this->validators as $key => $validator) {
                 if (isset($this->options[$key]) && !$validator($string, $this->options[$key])) {
                     return false;
